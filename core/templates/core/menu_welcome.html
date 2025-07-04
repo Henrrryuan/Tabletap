@@ -1,0 +1,132 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Welcome - TableTap{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Welcome to TableTap</h2>
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        {% if return_url %}
+                        <input type="hidden" name="return_url" value="{{ return_url }}">
+                        {% endif %}
+                        
+                        <!-- 餐桌选择 -->
+                        <div class="mb-4">
+                            <label for="table_select" class="form-label">Select a Table</label>
+                            <select class="form-select" id="table_select" name="table_number" required>
+                                <option value="" selected disabled>Please select a table...</option>
+                                {% for table in tables %}
+                                    {% if not table.is_occupied %}
+                                    <option value="{{ table.number }}" data-seats="{{ table.seats }}">
+                                        Table {{ table.number }} ({{ table.seats }} seats)
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- 用餐人数 -->
+                        <div class="mb-4">
+                            <label for="guest_count" class="form-label">Number of Guests</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="guest_count" 
+                                   name="guest_count" 
+                                   min="1" 
+                                   required>
+                            <div class="invalid-feedback" id="guest_count_feedback">
+                                Please enter a valid number of guests
+                            </div>
+                        </div>
+                        
+                        <!-- 提交按钮 -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-utensils me-2"></i>Start Ordering
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tableSelect = document.getElementById('table_select');
+    const guestCountInput = document.getElementById('guest_count');
+    const submitBtn = document.getElementById('submit_btn');
+    const form = document.querySelector('form');
+    
+    // 餐桌选择处理
+    tableSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const seats = parseInt(selectedOption.dataset.seats);
+        
+        // 设置人数输入的最大值
+        guestCountInput.max = seats;
+        guestCountInput.placeholder = `Max ${seats} people`;
+        
+        // 如果当前输入的人数超过座位数，重置输入
+        if (parseInt(guestCountInput.value) > seats) {
+            guestCountInput.value = "";
+        }
+        
+        validateForm();
+    });
+    
+    // 人数输入处理
+    guestCountInput.addEventListener('input', function() {
+        if (tableSelect.value) {
+            const seats = parseInt(tableSelect.options[tableSelect.selectedIndex].dataset.seats);
+            if (parseInt(this.value) > seats) {
+                this.value = seats;
+            }
+        }
+        validateForm();
+    });
+    
+    // 表单验证
+    function validateForm() {
+        const tableSelected = tableSelect.value !== '';
+        const guestCount = parseInt(guestCountInput.value);
+        const guestCountValid = !isNaN(guestCount) && guestCount > 0;
+        
+        if (tableSelected && guestCount) {
+            const seats = parseInt(tableSelect.options[tableSelect.selectedIndex].dataset.seats);
+            if (guestCount > seats) {
+                guestCountInput.setCustomValidity(`Maximum capacity is ${seats} people`);
+                submitBtn.disabled = true;
+                return;
+            }
+        }
+        
+        guestCountInput.setCustomValidity('');
+        submitBtn.disabled = !(tableSelected && guestCountValid);
+    }
+    
+    // 表单提交验证
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
+
+<!-- 背景装饰 -->
+<div class="position-fixed top-0 end-0 mt-5 me-5 d-none d-lg-block" style="z-index: -1; opacity: 0.03;">
+    <i class="fas fa-utensils fa-10x"></i>
+</div>
+<div class="position-fixed bottom-0 start-0 mb-5 ms-5 d-none d-lg-block" style="z-index: -1; opacity: 0.03;">
+    <i class="fas fa-coffee fa-10x"></i>
+</div>
+{% endblock %}

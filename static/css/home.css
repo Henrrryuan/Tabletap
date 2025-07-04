@@ -1,0 +1,13 @@
+
+.hover-card {
+    transition: transform 0.3s ease-in-out;
+}
+.hover-card:hover {
+    transform: translateY(-10px);
+}
+.icon-wrapper {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

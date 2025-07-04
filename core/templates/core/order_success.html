@@ -1,0 +1,99 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Order Submitted Successfully - TableTap{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card success-card fade-in">
+                <div class="card-body p-5">
+                    <!-- 成功图标 -->
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle fa-3x text-white"></i>
+                    </div>
+
+                    <!-- 订单信息 -->
+                    <div class="text-center mb-4">
+                        <h2 class="mb-3 fw-bold">Order Submitted Successfully!</h2>
+                        <p class="text-muted mb-1">Order Number: <span class="fw-bold text-primary">{{ order.order_number }}</span></p>
+                        <p class="text-muted">Order Time: {{ order.created_at|date:"Y-m-d H:i:s" }}</p>
+                    </div>
+
+                    <!-- 用餐信息 -->
+                    <div class="order-info">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="bg-primary rounded-circle p-3 text-white">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h5 class="mb-1">Dining Information</h5>
+                                <p class="mb-0">
+                                    <span class="badge bg-primary me-2">Table {{ order.table_number }}</span>
+                                    <span class="badge bg-info">{{ order.guest_count }} Guests</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 订单详情 -->
+                    <div class="order-table mb-4">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="py-3">Item</th>
+                                    <th class="py-3 text-center">Quantity</th>
+                                    <th class="py-3 text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderitem_set.all %}
+                                <tr class="order-item">
+                                    <td>
+                                        <h6 class="mb-0">{{ item.item.name }}</h6>
+                                        <small class="text-muted">{{ item.item.description|truncatechars:50 }}</small>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <span class="badge bg-light text-dark">× {{ item.quantity }}</span>
+                                    </td>
+                                    <td class="text-end align-middle">${{ item.price_at_time }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="total-section">
+                                <tr>
+                                    <td colspan="2" class="text-end fw-bold">Subtotal</td>
+                                    <td class="text-end">${{ order.total_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-end fw-bold">Service Fee (10%)</td>
+                                    <td class="text-end">${{ order.service_fee }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-end fw-bold">Total Amount</td>
+                                    <td class="text-end">
+                                        <span class="fw-bold text-primary fs-5">${{ order.grand_total }}</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="action-buttons d-flex justify-content-center gap-3">
+                        <a href="{% url 'menu_item_list' %}" class="btn btn-primary">
+                            <i class="fas fa-utensils me-2"></i>Continue Ordering
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Return to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

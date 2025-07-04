@@ -1,0 +1,55 @@
+    /* 购物车浮动按钮样式 */
+    .floating-cart {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1000;
+    }
+
+    .cart-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .cart-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        background-color: #0b5ed7;
+    }
+
+    .cart-counter {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        transition: all 0.3s ease;
+    }
+
+    .cart-counter.bounce {
+        animation: cartBounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
+    }
+
+    @keyframes cartBounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }

@@ -1,0 +1,80 @@
+{% extends "core/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}Staff Login - TableTap{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">TableTap</h1>
+                <p class="lead text-muted">Staff Management System</p>
+            </div>
+            
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="h3 mb-3">Staff Login</h2>
+                        <p class="text-muted">Please enter your username and password</p>
+                    </div>
+
+                    <!-- 员工登录表单 -->
+                    <form method="POST" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        
+                        <!-- 用户名输入 -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <!-- 密码输入 -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <!-- 错误消息显示 -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            Username or password is incorrect. Please try again.
+                        </div>
+                        {% endif %}
+
+                        <!-- 登录按钮 -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+                            <a href="{% url 'index' %}" class="btn btn-light">
+                                <i class="fas fa-arrow-left me-2"></i>Return to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 底部信息 -->
+            <div class="text-center mt-4">
+                <p class="text-muted">
+                    <small>If you forgot your password, please contact the system administrator</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 背景装饰 -->
+<div class="position-fixed top-0 end-0 mt-5 me-5 d-none d-lg-block" style="z-index: -1; opacity: 0.03;">
+    <i class="fas fa-user-tie fa-10x"></i>
+</div>
+<div class="position-fixed bottom-0 start-0 mb-5 ms-5 d-none d-lg-block" style="z-index: -1; opacity: 0.03;">
+    <i class="fas fa-clipboard-list fa-10x"></i>
+</div>
+{% endblock %} 

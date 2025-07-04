@@ -1,0 +1,172 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Table Management - TableTap{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Table Management</h1>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'table_batch_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>Batch Create Tables
+            </a>
+            <button class="btn btn-primary" onclick="addTable()">
+                <i class="fas fa-plus me-2"></i>Add Single Table
+            </button>
+        </div>
+    </div>
+
+    <!-- 餐桌网格视图 -->
+    <div class="row g-4 table-grid">
+        {% for table in tables %}
+        <div class="col-md-3 col-lg-2">
+            <div class="table-card {% if table.is_occupied %}occupied{% else %}available{% endif %}"
+                 data-table-id="{{ table.id }}"
+                 data-table-number="{{ table.number }}"
+                 data-seats="{{ table.seats }}">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center position-relative p-3">
+                        <div class="table-icon mb-2">
+                            <i class="fas fa-utensils fa-2x"></i>
+                        </div>
+                        <h5 class="card-title mb-1">Table {{ table.number }}</h5>
+                        <p class="card-text small mb-2">{{ table.seats }} seats</p>
+                        <div class="table-status mb-3">
+                            <span class="badge {% if table.is_occupied %}bg-danger{% else %}bg-success{% endif %}">
+                                {% if table.is_occupied %}Occupied{% else %}Available{% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- 操作按钮组 -->
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editTable('{{ table.id }}', '{{ table.number }}', '{{ table.seats }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" 
+                                    class="btn btn-sm {% if table.is_occupied %}btn-danger{% else %}btn-success{% endif %}" 
+                                    onclick="toggleTableStatus('{{ table.id }}')">
+                                <i class="fas {% if table.is_occupied %}fa-lock{% else %}fa-check{% endif %}"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteTable('{{ table.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 添加/编辑餐桌模态框 -->
+<div class="modal fade" id="tableModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tableModalLabel">Add Table</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="tableForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tableNumber" class="form-label">Table Number</label>
+                        <input type="text" class="form-control" id="tableNumber" name="number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tableSeats" class="form-label">Seat Count</label>
+                        <input type="number" class="form-control" id="tableSeats" name="seats" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+let currentTableId = null;
+
+function addTable() {
+    currentTableId = null;
+    document.getElementById('tableModalLabel').textContent = 'Add Table';
+    document.getElementById('tableForm').reset();
+    document.getElementById('tableForm').action = "{% url 'table_create' %}";
+    const modal = new bootstrap.Modal(document.getElementById('tableModal'));
+    modal.show();
+}
+
+function editTable(tableId, tableNumber, seats) {
+    currentTableId = tableId;
+    document.getElementById('tableModalLabel').textContent = 'Edit Table';
+    document.getElementById('tableNumber').value = tableNumber;
+    document.getElementById('tableSeats').value = seats;
+    document.getElementById('tableForm').action = `/tabletap/tables/${tableId}/edit/`;
+    const modal = new bootstrap.Modal(document.getElementById('tableModal'));
+    modal.show();
+}
+
+function deleteTable(tableId) {
+    fetch(`/tabletap/tables/${tableId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // 找到并移除对应的餐桌卡片元素
+            const tableCard = document.querySelector(`[data-table-id="${tableId}"]`).closest('.col-md-3');
+            if (tableCard) {
+                tableCard.remove();
+            }
+        } else {
+            alert('Delete failed, please try again');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Delete failed, please try again');
+    });
+}
+
+function toggleTableStatus(tableId) {
+    fetch(`/tabletap/api/tables/${tableId}/toggle-status/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Update table status failed, please try again');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Update table status failed, please try again');
+    });
+}
+
+document.getElementById('tableForm').addEventListener('submit', function(e) {
+    const tableNumber = document.getElementById('tableNumber').value;
+    const seats = document.getElementById('tableSeats').value;
+    
+    if (!tableNumber || !seats || seats < 1) {
+        e.preventDefault();
+        alert('Please fill in valid form data');
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

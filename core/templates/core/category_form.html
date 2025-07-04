@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+{% block title %}{% if category %}Edit Category{% else %}Create Category{% endif %} - TableTap{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">
+                {% if category %}Edit Category{% else %}Create Category{% endif %}
+            </h2>
+            <p class="mt-1 text-sm text-gray-600">
+                {% if category %}Modify existing category information{% else %}Create a new category{% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Category Name</label>
+                <div class="mt-1">
+                    <input type="text" name="name" id="name" 
+                           value="{{ category.name|default:'' }}"
+                           required
+                           class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                           placeholder="Enter category name">
+                </div>
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Category Description</label>
+                <div class="mt-1">
+                    <textarea name="description" id="description" rows="4"
+                              class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              placeholder="Enter category description">{{ category.description|default:'' }}</textarea>
+                </div>
+            </div>
+
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700">Category Image</label>
+                <div class="mt-1">
+                    <input type="file" name="image" id="image" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    {% if category.image %}
+                    <div class="mt-2">
+                        <img src="{{ category.image.url }}" alt="Current category image" class="h-32 w-auto object-cover rounded-md">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'category_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% if category %}Save Changes{% else %}Create Category{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

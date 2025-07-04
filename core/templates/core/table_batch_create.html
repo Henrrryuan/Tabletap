@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Batch Create Tables - TableTap{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Batch Create Tables</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- 起始桌号 -->
+                        <div class="form-floating mb-3">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="start_number" 
+                                   name="start_number" 
+                                   placeholder="Starting Table Number"
+                                   required>
+                            <label for="start_number">Starting Table Number</label>
+                            <div class="form-text">Example: 1 or A01</div>
+                        </div>
+
+                        <!-- 餐桌数量 -->
+                        <div class="form-floating mb-3">
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="table_count" 
+                                   name="table_count" 
+                                   placeholder="Number of Tables"
+                                   min="1"
+                                   max="100"
+                                   required>
+                            <label for="table_count">Number of Tables</label>
+                            <div class="form-text">Maximum 100 tables can be created at once</div>
+                        </div>
+
+                        <!-- 每桌座位数 -->
+                        <div class="form-floating mb-4">
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="seats_per_table" 
+                                   name="seats_per_table" 
+                                   placeholder="Seats Per Table"
+                                   min="1"
+                                   required>
+                            <label for="seats_per_table">Seats Per Table</label>
+                            <div class="form-text">Default number of seats for each table</div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus-circle me-2"></i>Create Tables
+                            </button>
+                            <a href="{% url 'table_list' %}" class="btn btn-light">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Table List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %} 

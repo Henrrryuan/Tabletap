@@ -1,0 +1,199 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{% if item %}Edit Menu Item{% else %}Add Menu Item{% endif %} - TableTap{% endblock %}
+{% block extra_head %}
+<link href="{% static 'css/menu_item_form.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- 页面标题 -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="h3 mb-0 text-center">
+                {% if item %}
+                    Edit Menu Item
+                {% else %}
+                    Add New Menu Item
+                {% endif %}
+            </h1>
+        </div>
+    </div>
+
+    <!-- 表单卡片 -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="menuItemForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- 图片上传预览区域 -->
+                        <div class="text-center mb-4">
+                            <div class="image-preview-container mb-3">
+                                <div class="image-preview" id="imagePreview">
+                                    {% if item.image %}
+                                        <img src="/tabletap{{ item.image.url }}" alt="Current item image" class="preview-image">
+                                    {% else %}
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                        <p class="mt-2 text-muted small">No image yet</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center gap-2">
+                                <label class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-upload me-2"></i>Upload Image
+                                    <input type="file" name="image" id="imageInput" accept="image/*" class="d-none">
+                                </label>
+                                {% if item.image %}
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteImage()">
+                                    <i class="fas fa-trash me-2"></i>Delete Image
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="text-muted small mt-2">
+                                Square images recommended, ideal size 800x800 pixels
+                            </div>
+                        </div>
+
+                        <!-- 基本信息 -->
+                        <div class="row g-3">
+                            <!-- 菜品名称 -->
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="name" 
+                                           name="name" 
+                                           value="{{ item.name|default:'' }}"
+                                           required
+                                           placeholder="Enter item name">
+                                    <label for="name">Item Name</label>
+                                </div>
+                            </div>
+
+                            <!-- 价格 -->
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="price" 
+                                           name="price" 
+                                           value="{{ item.price|default:'' }}"
+                                           required
+                                           step="0.01"
+                                           min="0"
+                                           placeholder="Enter price">
+                                    <label for="price">Price</label>
+                                </div>
+                            </div>
+
+                            <!-- 分类 -->
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="category" name="category" required>
+                                        <option value="" disabled {% if not selected_category %}selected{% endif %}>Select a category</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}" 
+                                                {% if selected_category.id == category.id %}selected{% endif %}>
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="category">Category</label>
+                                </div>
+                            </div>
+
+                            <!-- 描述 -->
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" 
+                                              id="description" 
+                                              name="description" 
+                                              style="height: 100px"
+                                              required
+                                              placeholder="Enter description">{{ item.description|default:'' }}</textarea>
+                                    <label for="description">Description</label>
+                                </div>
+                            </div>
+
+                            <!-- 是否可用 -->
+                            {% if item %}
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="is_available" 
+                                           name="is_available"
+                                           {% if item.is_available %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_available">Available</label>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save
+                            </button>
+                            <a href="{% url 'menu_item_list' %}" class="btn btn-light">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 交互脚本 -->
+<script>
+// 图片预览功能
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview image" class="preview-image">`;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// 删除图片功能
+function deleteImage() {
+    if (confirm('Are you sure you want to delete the current image?')) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = `
+            <i class="fas fa-image fa-3x text-muted"></i>
+            <p class="mt-2 text-muted small">No image yet</p>
+        `;
+        // 添加一个隐藏字段来标记删除图片
+        const form = document.getElementById('menuItemForm');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'delete_image';
+        input.value = 'true';
+        form.appendChild(input);
+    }
+}
+
+// 表单验证
+(function () {
+    'use strict'
+    const form = document.querySelector('.needs-validation')
+    form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+    }, false)
+})()
+</script>
+{% endblock %} 

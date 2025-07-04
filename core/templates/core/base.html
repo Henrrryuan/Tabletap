@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TableTap{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Base CSS -->
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    
+    <!-- Page Specific CSS -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'logout' %}">TableTap</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_authenticated and user.is_staff %}
+                        <!-- Staff Navigation -->
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'menu-items' in request.path or 'menu' in request.path %}active{% endif %}" href="{% url 'menu_item_list' %}">
+                                <i class="fas fa-utensils me-1"></i>Menu Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/orders/' in request.path %}active{% endif %}" href="{% url 'orders' %}">
+                                <i class="fas fa-clipboard-list me-1"></i>Order Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/tables/' in request.path %}active{% endif %}" href="{% url 'table_list' %}">
+                                <i class="fas fa-chair me-1"></i>Table Management
+                            </a>
+                        </li>
+                    {% else %}
+                        <!-- Customer Navigation -->
+                        {% if request.session.table_number %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/menu-items/' %}active{% endif %}" href="{% url 'menu_item_list' %}">
+                                    <i class="fas fa-book-open me-1"></i>Menu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/cart/' %}active{% endif %}" href="{% url 'cart' %}">
+                                    <i class="fas fa-shopping-cart me-1"></i>Cart
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>{{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Log Out
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="text-muted mb-0">
+                <small>© {% now "Y" %} TableTap. All rights reserved.</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

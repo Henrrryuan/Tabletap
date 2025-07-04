@@ -1,0 +1,198 @@
+body {
+    background-color: #f8f9fa;
+}
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+@media (min-width: 768px) {
+    .container-fluid {
+        padding: 2rem;
+    }
+}
+.page-header {
+    margin-bottom: 2rem;
+}
+.page-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+.page-header p {
+    color: #6c757d;
+    font-size: 1rem;
+}
+.stats-section {
+    margin-bottom: 3rem;
+}
+.stats-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: calc(var(--border-radius) + 5px);
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.stats-item {
+    text-align: center;
+    padding: 0.3rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+.stats-item:hover {
+    transform: translateY(-5px);
+}
+.stats-number {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--accent-color), #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+.stats-label {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.filter-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 0.1rem;
+    margin: 0 auto 2rem;
+    box-shadow: var(--box-shadow);
+    max-width: 470px;
+}
+.date-input {
+    border: 2px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1rem;
+    width: 180px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    text-align: center;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+}
+.date-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+    outline: none;
+}
+.search-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.search-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(26,35,126,0.2);
+}
+.order-card {
+    background: white;
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+.order-card .card-header {
+    background: var(--light-bg);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.order-card .card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+.order-info {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.order-info i {
+    width: 24px;
+    text-align: center;
+    margin-right: 8px;
+}
+.order-items {
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) #f0f0f0;
+}
+.order-items::-webkit-scrollbar {
+    width: 6px;
+}
+.order-items::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+.order-items::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+.amount-section {
+    background: var(--light-bg);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-top: 1rem;
+}
+.amount-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+.amount-value {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.pagination {
+    margin-top: 2rem;
+}
+.pagination .page-link {
+    color: var(--primary-color);
+    border: none;
+    padding: 0.8rem 1.2rem;
+    margin: 0 0.3rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.pagination .page-item.active .page-link {
+    background: var(--primary-color);
+    color: white;
+}
+.pagination .page-link:hover {
+    background: #e3f2fd;
+    transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+    .stats-item {
+        margin: 0.5rem 0;
+    }
+    .stats-number {
+        font-size: 2.5rem;
+    }
+    .container-fluid {
+        padding: 1rem;
+    }
+} 
